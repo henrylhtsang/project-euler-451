@@ -13,6 +13,7 @@ vector<int> carmichael(int n, vector<int> &primes);
 vector<int> euler(int n, vector<int> &primes);
 int findprimefactor(int n, vector<int> &primes);
 int findprimepower(int n, int p);
+int bruteforce(int n);
 
 
 int main(){
@@ -25,10 +26,50 @@ int main(){
   vector<int> carmichaelnum  = carmichael(n, primes);
   vector<int> eulernum = euler(n, primes);
 
+  vector<int> modinv (n+1, 1);
+
+  // handle 2's powers
+  int k = 1; // exponent
+  int pk = 2; //p^k
+  while (pk <= n){
+    modinv[pk] = bruteforce(pk);
+  }
+
+  // other prime power
+
+  for (int i = 1; i<primes.size(); i++){
+    if (carmichaelnum[i] != eulernum[i]){
+      int c = 0; // find first coprime that is not 2
+      // note that first coprime is always a prime
+      for (int j = 0; j<primes.size(); j++){ // skipping prime 2
+        if (i % primes[j] != 0){
+          c = primes[j];
+          break;
+        }
+      }
+
+      ans = ans + i - modexp((long) c, carmichaelnum[i]/2, (long) i); // see wiki: Carmichael function
+      cout << i << " " << i - modexp((long) c, carmichaelnum[i]/2, (long) i) << endl;
+    }
+  }
+
+
+  for (int i = 0; i<primes.size(); i++){
+    int pk = primes[i]; // this number is the prime power
+    int k = 1; // exponent of the prime power
+    while (pk <= n){
+      modinv[pk] = eulerpk(primes[i], k);
+      k++;
+      if (INT_MAX / primes[i] < pk)
+        break;
+      pk = pk * primes[i];
+    }
+  }
+
   cout << "Euler and Carmichael functions ok!" << endl;
 
   // compute modular inverse for each number
-  long long ans = 0;
+  long ans = 0;
 
   for (int i = 3; i<=n; i++){
     // cout << i << " " << carmichaelnum[i] << " " << eulernum[i] << endl;
@@ -45,14 +86,23 @@ int main(){
       ans = ans + i - modexp((long) c, carmichaelnum[i]/2, (long) i); // see wiki: Carmichael function
       cout << i << " " << i - modexp((long) c, carmichaelnum[i]/2, (long) i) << endl;
     }
-    else
-      ans++;
+  }
 
+  for (int i = 3; i<=n; i++){
+    ans+=modinv[i];
   }
 
   cout << ans << endl;
 
   return 0;
+}
+
+int bruteforce(int n){
+  for (long j = n-2; j>=1; j--){
+    if (j*j % n == 1){
+      return j;
+    }
+  return 1;
 }
 
 int findprimepower(int n, int p){
