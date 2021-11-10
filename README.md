@@ -33,4 +33,4 @@ The chinese remainder theorem says that if n = p^k * q^h, where p and q are prim
 
 ## Our ideas
 
-For each number n, we gather a list of vectors of the modular inverses of the prime power factors of n. Then we `merge' the vectors using the chinese remainder theorem to get a vector of modular inverses of n. At the end, we find the biggest entry (that is smaller then n-1), which is the l(n) desired. 
+For each number n, we gather a list of vectors of the modular inverses of the prime power factors of n. Then we `merge' the vectors using the chinese remainder theorem to get a vector of modular inverses of n. At the end, we find the biggest entry (that is bounded by n-1) of such vector. This number is the l(n) desired. 
